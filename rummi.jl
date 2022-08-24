@@ -220,18 +220,59 @@ function getRun(startNumber::Int, color::Int, length::Int)
     return tileGroup(false, tileArray)
 end
 
+function attempt!(activeSet::Array{tile}, groupList::Array{tileGroup})
+    notAllowed = Vector{tileGroup}()
+    layerSolved = false
+    while(!layerSolved)
+        localSet = copy(activeSet)
+        tempGroup = findGroup(localSet, notAllowed, 1)
+        remove!(tempGroup, localSet)
+        if length(tempGroup.tiles) == 0
+            return 0
+        elseif length(localSet) == 0
+            add!(tempGroup, groupList)
+            return 1
+        else
+            result = attempt!(localSet, groupList)
+            if result == 0
+                add!(tempGroup, notAllowed)
+            else
+                add!(tempGroup, groupList)
+                layerSolved = true
+            end
+        end
+
+    end
+    return 1
+end
+
 #code execution--for testing and then eventually running
 begin
 
 
-    testingList = [tile(10,1), tile(3,3), tile(5,0), tile(13,2),tile(2,3), tile(2, 2), tile(2, 1), tile(2,0)]
+    testingList = [tile(1,0), tile(2,1), tile(2, 0), tile(2,2), tile(2,3), tile(3,0), tile(4,0)]
+    tileSort!(testingList)
 
-    notAllowed = Vector{tileGroup}()
-    push!(notAllowed, findGroup(testingList, notAllowed, 1))
-    remove!(notAllowed[1], testingList)
-    tileGroupsPrint(notAllowed)
-    push!(notAllowed, findGroup(testingList, notAllowed, 1))
-    tileGroupsPrint(notAllowed)
+
+    groupList = Vector{tileGroup}()
+    status = attempt!(testingList, groupList)
+    if (status == 1)
+        println("SUCCESS")
+        tileGroupsPrint(groupList)
+    else
+        println("fail")
+    end
+
+
+
+    # notAllowed = Vector{tileGroup}()
+    # push!(notAllowed, findGroup(testingList, notAllowed, 1))
+    # remove!(notAllowed[1], testingList)
+    # tileGroupsPrint(notAllowed)
+    # println("__________")
+    # push!(notAllowed, findGroup(testingList, notAllowed, 1))
+    # tileGroupsPrint(notAllowed)
+    
     
     # tileGroupsPrint(getCombinations(1, 3))
 
