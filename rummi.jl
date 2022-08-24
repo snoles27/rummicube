@@ -56,6 +56,28 @@ function tilePrint(tiles::Array{tile})
     
 end
 
+function tileGroupsPrint(tileGroups::Array{tileGroup})
+
+
+    println("___________")
+    println()
+    for group in tileGroups
+
+        print("Group Type: ")
+        if group.isMatching
+            println("Matching")
+        else
+            println("Run")
+        end
+        
+        tilePrint(group.tiles)
+
+        println("___________")
+        println()
+    end
+
+end
+
 function compareGroups(group1::tileGroup, group2::tileGroup)
     #assumes both group1 and group2 are storted
     #check the obvious
@@ -76,25 +98,68 @@ function compareGroups(group1::tileGroup, group2::tileGroup)
     
 end
 
+function add!(toAdd::tileGroup, groupList::Array{tileGroup})
+    #add toAdd to groupList
+    push!(groupList, copy(toAdd))
+end
+
+function remove!(removeGroup::tileGroup, tileList::Array{tile})
+
+    for tile in removeGroup.tiles
+        index = getIndexOf(tile, tileList)
+        if index > 0
+            deleteat!(tileList, index)
+        else
+            return false
+        end
+    end
+    return true
+end
+
+function getIndexOf(find::tile, list::Array{tile})
+    
+    for i = 1:length(list)
+        if find.sortValue == list[i].sortValue
+            return i
+        end
+    end
+    return -1
+end
 
 #code execution--for testing and then eventually running
 begin
 
+    testingList = [tile(10,1), tile(3,3), tile(5,0), tile(13,2),tile(2,3), tile(2, 2), tile(2, 1), tile(2,0)]
+    testGroup = tileGroup(true, testingList[5:end])
+
+    tilePrint(testingList)
+    println()
+    remove!(testGroup, testingList)
+    tilePrint(testingList)
+    tileGroupsPrint([testGroup])
+
     #testing sorting and printing
-    #testingList = [tile(10,1), tile(3,3), tile(5,0), tile(13,2)]
+    # testingList = [tile(10,1), tile(3,3), tile(5,0), tile(13,2)]
     # tilePrint(testingList)
     # tileSort!(testingList)
     # println()
     # tilePrint(testingList)
 
+    # plosgroup = [tile(2,3), tile(2, 1), tile(2, 2)]
+    # testGroup = tileGroup(true, plosgroup)
+    # testGroup2 = tileGroup(true, [tile(2,3), tile(2, 2), tile(2, 1), tile(2,0)])
+
+    # groupArray = Vector{tileGroup}()
+    # add!(testGroup, groupArray)
+    # add!(testGroup2, groupArray)
+
+    # tileGroupsPrint(groupArray)
+
     #testing tile groups and compare groups
     # plosgroup = [tile(2,3), tile(2, 1), tile(2, 2)]
     # tilePrint(plosgroup)
-    # testGroup = tileGroup(true, plosgroup)
     # println("--------")
     # tilePrint(testGroup.tiles)
-
-    # testGroup2 = tileGroup(true, [tile(2,3), tile(2, 2), tile(2, 1)])
     # println("--------")
     # println(compareGroups(testGroup,testGroup2))
 
