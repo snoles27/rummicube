@@ -266,6 +266,12 @@ function colorTally(tileList::Array{tile})
 end
 
 function runAndPrint(tileList::Array{tile})
+    tileSort!(testingList)
+    tilePrint(testingList)
+    println()
+    print("n = ")
+    println(length(testingList))
+    println()
 
     groupList = Vector{tileGroup}()
 
@@ -287,10 +293,7 @@ end
 begin
 
 
-    testingList = [tile(1,0), tile(2,1), tile(2, 0), tile(2,2), tile(2,3), tile(3,0), tile(4,0), tile(1,1), tile(1,2), tile(3,3), tile(4,3), tile(5,3), tile(6,3), tile(7,3), tile(6,1), tile(6,2), tile(6,0), tile(8,3), tile(9,3), tile(1,0), tile(1,1), tile(1,2), tile(1,3), tile(10,1), tile(10,2), tile(10,3), tile(11,3)]
-    tileSort!(testingList)
-    tilePrint(testingList)
-    println()
+    testingList = [tile(1,0), tile(2,1), tile(2, 0), tile(2,2), tile(2,3), tile(3,0), tile(4,0), tile(1,1), tile(1,2), tile(3,3), tile(4,3), tile(5,3), tile(6,3), tile(7,3), tile(6,1), tile(6,2), tile(6,0), tile(8,3), tile(9,3), tile(1,0), tile(1,1), tile(1,2), tile(1,3), tile(10,1), tile(10,2), tile(10,3), tile(11,3), tile(11,1), tile(11,0)]
 
     runAndPrint(testingList)
 
