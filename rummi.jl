@@ -37,7 +37,7 @@ function tileSort(tiles::Array{tile})
     return copytile
 end
 
-function tilePrint(tiles::Array{tile})
+function Base.print(tiles::Array{tile})
     for tile in tiles
         print(tile.value)
         if tile.color == 0
@@ -56,7 +56,7 @@ function tilePrint(tiles::Array{tile})
     
 end
 
-function tileGroupsPrint(tileGroups::Array{tileGroup})
+function Base.print(tileGroups::Array{tileGroup})
 
 
     println("___________")
@@ -70,7 +70,7 @@ function tileGroupsPrint(tileGroups::Array{tileGroup})
             println("Run")
         end
         
-        tilePrint(group.tiles)
+        print(group.tiles)
 
         println("___________")
         println()
@@ -266,11 +266,11 @@ function colorTally(tileList::Array{tile})
 end
 
 function runAndPrint(tileList::Array{tile})
-    tileSort!(testingList)
-    tilePrint(testingList)
+    tileSort!(tileList)
+    print(tileList)
     println()
     print("n = ")
-    println(length(testingList))
+    println(length(tileList))
     println()
 
     groupList = Vector{tileGroup}()
@@ -282,10 +282,21 @@ function runAndPrint(tileList::Array{tile})
 
     if (status == 1)
         println("SUCCESS")
-        tileGroupsPrint(groupList)
+        print(groupList)
     else
         println("fail")
     end
+
+end
+
+function getRandomTiles(numTiles::Int)
+
+    tileList = Vector{tile}()
+    for i = 1:numTiles
+        push!(tileList, tile(rand(1:13), rand(1:4) - 1))
+    end
+
+    return tileList
 
 end
 
@@ -293,45 +304,51 @@ end
 begin
 
 
-    testingList = [tile(1,0), tile(2,1), tile(2, 0), tile(2,2), tile(2,3), tile(3,0), tile(4,0), tile(1,1), tile(1,2), tile(3,3), tile(4,3), tile(5,3), tile(6,3), tile(7,3), tile(6,1), tile(6,2), tile(6,0), tile(8,3), tile(9,3), tile(1,0), tile(1,1), tile(1,2), tile(1,3), tile(10,1), tile(10,2), tile(10,3), tile(11,3), tile(11,1), tile(11,0), tile(5,0)]
+    tileList = Vector{tile}()
+    push!(tileList, tile(1,0))
+    push!(tileList, tile(2,0))
+    push!(tileList, tile(3,0))
 
-    runAndPrint(testingList)
+
+    #testingList = [tile(1,0), tile(2,1), tile(2, 0), tile(2,2), tile(2,3), tile(3,0), tile(4,0), tile(1,1), tile(1,2), tile(3,3), tile(4,3), tile(5,3), tile(6,3), tile(7,3), tile(6,1), tile(6,2), tile(6,0), tile(8,3), tile(9,3), tile(1,0), tile(1,1), tile(1,2), tile(1,3), tile(10,1), tile(10,2), tile(10,3), tile(11,3), tile(11,1), tile(5,0), tile(3,1)]
+
+    runAndPrint(tileList)
 
 
 
     # notAllowed = Vector{tileGroup}()
     # push!(notAllowed, findGroup(testingList, notAllowed, 1))
     # remove!(notAllowed[1], testingList)
-    # tileGroupsPrint(notAllowed)
+    # print(notAllowed)
     # println("__________")
     # push!(notAllowed, findGroup(testingList, notAllowed, 1))
-    # tileGroupsPrint(notAllowed)
+    # print(notAllowed)
     
     
-    # tileGroupsPrint(getCombinations(1, 3))
+    # print(getCombinations(1, 3))
 
     # group = getRun(4, 2, 5)
-    # tileGroupsPrint([group])
+    # print([group])
     
     #a = a[1:end .!=2, :] example removing the second row
 
     # testingList = [tile(10,1), tile(3,3), tile(5,0), tile(13,2),tile(2,3), tile(2, 2), tile(2, 1), tile(2,0)]
     # testGroup = tileGroup(true, testingList[5:end])
 
-    # tilePrint(testingList)
+    # print(testingList)
     # println()
     # remove!(testGroup, testingList)
-    # tilePrint(testingList)
-    # tileGroupsPrint([testGroup])
+    # print(testingList)
+    # print([testGroup])
 
 
 
     #testing sorting and printing
     # testingList = [tile(10,1), tile(3,3), tile(5,0), tile(13,2)]
-    # tilePrint(testingList)
+    # print(testingList)
     # tileSort!(testingList)
     # println()
-    # tilePrint(testingList)
+    # print(testingList)
 
     # plosgroup = [tile(2,3), tile(2, 1), tile(2, 2)]
     # testGroup = tileGroup(true, plosgroup)
@@ -341,13 +358,13 @@ begin
     # add!(testGroup, groupArray)
     # add!(testGroup2, groupArray)
 
-    # tileGroupsPrint(groupArray)
+    # print(groupArray)
 
     #testing tile groups and compare groups
     # plosgroup = [tile(2,3), tile(2, 1), tile(2, 2)]
-    # tilePrint(plosgroup)
+    # print(plosgroup)
     # println("--------")
-    # tilePrint(testGroup.tiles)
+    # print(testGroup.tiles)
     # println("--------")
     # println(compareGroups(testGroup,testGroup2))
 
