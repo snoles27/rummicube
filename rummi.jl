@@ -148,7 +148,7 @@ end
 
 function findGroup(tileList::Array{tile}, notAllowed::Array{tileGroup}, startIndex::Int)
 
-    colorTotals = [10,10,10,10] #temp (RGBY)
+    colorTotals = colorTally(tileList)
 
     for i = startIndex:length(tileList)
         color = tileList[i].color
@@ -158,7 +158,7 @@ function findGroup(tileList::Array{tile}, notAllowed::Array{tileGroup}, startInd
                 possibilities = getCombinations(color, number)
                 for trygroup in possibilities
                     if(containsAll(trygroup, tileList) && !compareGroups(trygroup, notAllowed))
-                        return trygroup
+                        return trygroup, i
                     end
                 end
             else #run 
@@ -166,14 +166,14 @@ function findGroup(tileList::Array{tile}, notAllowed::Array{tileGroup}, startInd
                     for k = 3:colorTotals[color + 1]
                         trygroup = getRun(tileList[i].value, color, k)
                         if(containsAll(trygroup, tileList) && !compareGroups(trygroup, notAllowed))
-                            return trygroup
+                            return trygroup, i
                         end
                     end
                 end
             end
         end
     end
-    return tileGroup(true, Vector{tile}())
+    return tileGroup(true, Vector{tile}()), -1
 end
 
 function equals(tile1::tile, tile2::tile)
@@ -223,9 +223,11 @@ end
 function attempt!(activeSet::Array{tile}, groupList::Array{tileGroup})
     notAllowed = Vector{tileGroup}()
     layerSolved = false
+    startSeach = 1
     while(!layerSolved)
         localSet = copy(activeSet)
-        tempGroup = findGroup(localSet, notAllowed, 1)
+        tempGroup, leftOffAt = findGroup(localSet, notAllowed, startSeach)
+        startSeach = leftOffAt
         remove!(tempGroup, localSet)
         if length(tempGroup.tiles) == 0
             return 0
@@ -246,22 +248,51 @@ function attempt!(activeSet::Array{tile}, groupList::Array{tileGroup})
     return 1
 end
 
-#code execution--for testing and then eventually running
-begin
+function colorTally(tileList::Array{tile})
 
+    numColor = zeros(Int, 4)
+    for tile in tileList
+        if tile.color == 0
+            numColor[1] = numColor[1] + 1
+        elseif tile.color == 1
+            numColor[2] = numColor[2] + 1
+        elseif tile.color == 2
+            numColor[3] = numColor[3] + 1
+        elseif tile.color == 3
+            numColor[4] = numColor[4] + 1
+        end
+    end
+    return numColor
+end
 
-    testingList = [tile(1,0), tile(2,1), tile(2, 0), tile(2,2), tile(2,3), tile(3,0), tile(4,0)]
-    tileSort!(testingList)
-
+function runAndPrint(tileList::Array{tile})
 
     groupList = Vector{tileGroup}()
-    status = attempt!(testingList, groupList)
+
+    println("_______Performance Data_______")
+    status =  @timev attempt!(tileList, groupList)
+    println("______________________________")
+    println()
+
     if (status == 1)
         println("SUCCESS")
         tileGroupsPrint(groupList)
     else
         println("fail")
     end
+
+end
+
+#code execution--for testing and then eventually running
+begin
+
+
+    testingList = [tile(1,0), tile(2,1), tile(2, 0), tile(2,2), tile(2,3), tile(3,0), tile(4,0), tile(1,1), tile(1,2), tile(3,3), tile(4,3), tile(5,3), tile(6,3), tile(7,3), tile(6,1), tile(6,2), tile(6,0), tile(8,3), tile(9,3), tile(1,0), tile(1,1), tile(1,2), tile(1,3), tile(10,1), tile(10,2), tile(10,3), tile(11,3)]
+    tileSort!(testingList)
+    tilePrint(testingList)
+    println()
+
+    runAndPrint(testingList)
 
 
 
