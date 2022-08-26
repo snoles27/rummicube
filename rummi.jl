@@ -1,4 +1,5 @@
 ####using statements####
+using Plots
 
 #####structs#######
 
@@ -124,6 +125,18 @@ function remove!(removeGroup::tileGroup, tileList::Array{tile})
         end
     end
     return true
+end
+
+function remove!(tile::tile, tileList::Array{tile})
+
+    index = getIndexOf(tile, tileList)
+    if index > 0
+        deleteat!(tileList, index)
+        return true
+    else
+        return false
+    end
+
 end
 
 function containsAll(group::tileGroup, tileList::Array{tile})
@@ -276,6 +289,7 @@ function runAndPrint(tileList::Array{tile})
     groupList = Vector{tileGroup}()
 
     println("_______Performance Data_______")
+    println()
     status =  @timev attempt!(tileList, groupList)
     println("______________________________")
     println()
@@ -300,19 +314,44 @@ function getRandomTiles(numTiles::Int)
 
 end
 
+function getTimePlot(startNum::Int, endNum::Int)
+    
+    numTrials = 5
+    timeArray = Vector{Float64}()
+    numArray = collect(startNum:endNum)
+    for i in numArray
+        time = 0
+        for j = 1:numTrials
+            tileList = getRandomTiles(i)
+            time = time + @elapsed attempt!(tileList, Vector{tileGroup}())
+        end
+        time = time / numTrials
+        push!(timeArray, time)
+    end
+    b = log.(timeArray)
+    A = hcat(numArray, ones(length(numArray)))
+    x = A \ b
+
+    f(n) = x[1] * n + x[2]
+
+    #scatter(numArray, timeArray, yaxis=:log)
+    scatter(numArray, b)
+    plot!(numArray, f.(numArray))
+
+
+
+end
+
 #code execution--for testing and then eventually running
 begin
 
 
-    tileList = Vector{tile}()
-    push!(tileList, tile(1,0))
-    push!(tileList, tile(2,0))
-    push!(tileList, tile(3,0))
+    #tileList = [tile(1,0), tile(2,1), tile(2, 0), tile(2,2), tile(2,3), tile(3,0), tile(4,0), tile(1,1), tile(1,2), tile(3,3), tile(4,3), tile(5,3), tile(6,3), tile(7,3), tile(6,1), tile(6,2), tile(6,0), tile(8,3), tile(9,3), tile(1,0), tile(1,1), tile(1,2), tile(1,3), tile(10,1), tile(10,2), tile(10,3), tile(11,3), tile(11,0), tile(11,1), tile(5,0), tile(3,1)]
 
+    #tileList = getRandomTiles(31)
+    #runAndPrint(tileList)
 
-    #testingList = [tile(1,0), tile(2,1), tile(2, 0), tile(2,2), tile(2,3), tile(3,0), tile(4,0), tile(1,1), tile(1,2), tile(3,3), tile(4,3), tile(5,3), tile(6,3), tile(7,3), tile(6,1), tile(6,2), tile(6,0), tile(8,3), tile(9,3), tile(1,0), tile(1,1), tile(1,2), tile(1,3), tile(10,1), tile(10,2), tile(10,3), tile(11,3), tile(11,1), tile(5,0), tile(3,1)]
-
-    runAndPrint(tileList)
+    getTimePlot(10, 30)
 
 
 
