@@ -351,7 +351,7 @@ begin
     #tileList = getRandomTiles(31)
     #runAndPrint(tileList)
 
-    getTimePlot(10, 30)
+    getTimePlot(10, 34)
 
 
 
