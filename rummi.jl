@@ -335,10 +335,10 @@ function getTimePlot(startNum::Int, endNum::Int)
     f(n) = x[1] * n + x[2]
 
     #scatter(numArray, timeArray, yaxis=:log)
-    scatter(numArray, b)
-    plot!(numArray, f.(numArray))
-
-
+    scatter(numArray, b, label = "Data")
+    plot!(numArray, f.(numArray), label = "Linear Fit")
+    xlabel!("Number of Tiles")
+    ylabel!("log(time to complete)")
 
 end
 
@@ -351,7 +351,7 @@ begin
     #tileList = getRandomTiles(31)
     #runAndPrint(tileList)
 
-    getTimePlot(10, 34)
+    getTimePlot(10, 28)
 
 
 
